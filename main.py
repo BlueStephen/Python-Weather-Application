@@ -2,18 +2,38 @@ import requests
 
 api_key = '2cf6f6c8723d9456cd83a63323862c12'
 
-city = input("Enter the name of the city: ")
+def get_weather_info(city):
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
+    response = requests.get(url)
 
-url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
+    if response.status_code == 200:
+        data = response.json()
+        temp_kelvin = data['main']['temp']
+        temp_celsius = round(float(temp_kelvin) - 273.15, 2)
+        desc = data['weather'][0]['description'].title()
+        weather_info = f'Temperature: {temp_celsius}°C\nDescription: {desc}'
+        return weather_info
+    else:
+        return 'Unable to fetch weather data'
 
-response = requests.get(url)
+def display_weather_ascii(city):
+    weather_info = get_weather_info(city)
+    if weather_info.startswith('Unable'):
+        print(weather_info)
+    else:
+        print("Weather Information for", city)
+        print("┌" + "─" * 38 + "┐")
+        print("│" + " " * 38 + "│")
+        print("│" + " " * 12 + "Weather Report" + " " * 12 + "│")
+        print("│" + "─" * 38 + "│")
+        lines = weather_info.split('\n')
+        for line in lines:
+            print("│" + line.ljust(38) + "│")
+        print("└" + "─" * 38 + "┘")
 
-if response.status_code == 200:
-    data = response.json()
-    temp = data['main']['temp']
-    desc = data['weather'][0]['description']
-    Celsius = round(float(temp) - 273.15, 2)
-    print(f'Temperature: {temp} K or {Celsius} C')
-    print(f'Description: {desc.title()}')
-else:
-    print('Unable to fetch weather data')
+while True:
+    city = input("Enter the name of the city: ")
+    display_weather_ascii(city)
+    another_city = input("Do you want to enter another city? (yes/no): ")
+    if another_city.lower() != 'yes':
+        break
