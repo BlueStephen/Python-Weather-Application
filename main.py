@@ -1,6 +1,5 @@
 import requests
-
-api_key = '2cf6f6c8723d9456cd83a63323862c12'
+from hide import api_key
 
 def get_weather_info(city):
     url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}'
@@ -11,7 +10,7 @@ def get_weather_info(city):
         temp_kelvin = data['main']['temp']
         temp_celsius = round(float(temp_kelvin) - 273.15, 2)
         desc = data['weather'][0]['description'].title()
-        weather_info = f'Temperature: {temp_celsius}°C\nDescription: {desc}'
+        weather_info = f'Temperature: {temp_kelvin} K or {temp_celsius}°C\nDescription: {desc}'
         return weather_info
     else:
         return 'Unable to fetch weather data'
